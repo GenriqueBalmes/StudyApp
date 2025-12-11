@@ -63,6 +63,11 @@ class TasksFragment : Fragment() {
         fabAddTask.setOnClickListener {
             showAddTaskDialog()
         }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 4b5b785b8567a4b074ab66dcc3b463009012c558
     }
 
     private fun setupRecyclerView() {
@@ -257,16 +262,76 @@ class TasksFragment : Fragment() {
     }
 
     private fun deleteTask(task: Task) {
+        val userId = auth.currentUser?.uid
+        if (userId == null || task.userId != userId) {
+            showToast("Cannot delete task: Unauthorized")
+            return
+        }
+
+        println("🗑️ DEBUG: Attempting to delete task: ${task.id}")
+        println("🗑️ Task belongs to user: ${task.userId}")
+        println("🗑️ Current user: $userId")
+
         db.collection("tasks")
             .document(task.id)
             .delete()
             .addOnSuccessListener {
-                println("🗑️ Task deleted: ${task.id}")
+                println("✅ Task successfully deleted: ${task.id}")
                 showToast("Task deleted")
+
+                // Remove from local list
+                val index = tasks.indexOfFirst { it.id == task.id }
+                if (index != -1) {
+                    tasks.removeAt(index)
+                    taskAdapter.updateTasks(tasks)
+                    updateStats()
+                    updateEmptyState()
+                }
             }
             .addOnFailureListener { e ->
                 println("❌ Error deleting task: ${e.message}")
-                showToast("Error: ${e.message}")
+                println("❌ Error details: ${e.toString()}")
+
+                // Show more detailed error message
+                val errorMsg = when {
+                    e.message?.contains("permission") == true ->
+                        "Permission denied. Check Firebase rules."
+                    e.message?.contains("not found") == true ->
+                        "Task not found or already deleted"
+                    else -> "Error: ${e.message}"
+                }
+                showToast(errorMsg)
+
+                // Test if we can read the task first
+                testTaskAccess(task)
+            }
+    }
+
+    // Add this debug function
+    private fun testTaskAccess(task: Task) {
+        val userId = auth.currentUser?.uid ?: return
+
+        println("🔍 DEBUG: Testing access to task ${task.id}")
+
+        db.collection("tasks")
+            .document(task.id)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val taskUserId = document.getString("userId") ?: "none"
+                    println("📄 Task exists! User ID in DB: $taskUserId")
+                    println("📄 Current user ID: $userId")
+                    println("📄 Can delete? ${taskUserId == userId}")
+
+                    if (taskUserId != userId) {
+                        showToast("Cannot delete other user's task")
+                    }
+                } else {
+                    println("📄 Task doesn't exist in DB")
+                }
+            }
+            .addOnFailureListener { e ->
+                println("❌ Cannot read task: ${e.message}")
             }
     }
 
