@@ -18,15 +18,18 @@
         <activity
             android:name=".MainNavActivity"
             android:exported="true">
+            <!-- The intent-filter has been removed from here -->
+        </activity>
+
+        <!-- Login Activity - This is now the ONLY launcher activity -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Login Activity -->
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
 
         <!-- Register Activity -->
         <activity
@@ -38,7 +41,7 @@
             android:name=".HomeActivity"
             android:exported="false" />
 
-        <!-- Main Activity (original - keeping it but not as launcher) -->
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />

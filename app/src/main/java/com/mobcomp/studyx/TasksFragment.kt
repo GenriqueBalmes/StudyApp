@@ -63,9 +63,6 @@ class TasksFragment : Fragment() {
         fabAddTask.setOnClickListener {
             showAddTaskDialog()
         }
-
-        // Add debug button
-        addDebugButton(view)
     }
 
     private fun setupRecyclerView() {

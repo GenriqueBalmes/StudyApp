@@ -46,7 +46,8 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         tvLoginLink.setOnClickListener {
-            finish()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -137,10 +138,13 @@ class RegisterActivity : AppCompatActivity() {
                                 btnRegister.text = "Register"
                                 Toast.makeText(
                                     this,
-                                    "Registration successful!",
-                                    Toast.LENGTH_SHORT
+                                    "Registration successful! Please log in.",
+                                    Toast.LENGTH_LONG
                                 ).show()
-                                startActivity(Intent(this, MainNavActivity::class.java))  // ← CHANGED!
+
+                                val intent = Intent(this, LoginActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
                                 finish()
                             }
                             .addOnFailureListener { e ->
@@ -164,6 +168,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
     }
+
 
     private fun getLayoutId(name: String): Int {
         return resources.getIdentifier(name, "layout", packageName)
