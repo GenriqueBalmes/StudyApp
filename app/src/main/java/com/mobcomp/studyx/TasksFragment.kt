@@ -63,11 +63,6 @@ class TasksFragment : Fragment() {
         fabAddTask.setOnClickListener {
             showAddTaskDialog()
         }
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 4b5b785b8567a4b074ab66dcc3b463009012c558
     }
 
     private fun setupRecyclerView() {
